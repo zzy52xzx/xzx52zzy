@@ -222,6 +222,9 @@
   }
   .msg.me .msg-body{align-items:flex-end;}
 
+  /* 问卷消息：卡片加宽 */
+  .questionnaire-msg .msg-body{max-width:82%;}
+
   .proactive-badge{
     position:absolute;
     top:-8px;
@@ -244,26 +247,6 @@
     box-shadow:0 1px 4px rgba(91,107,255,.35);
   }
 
-  .questionnaire-badge{
-    position:absolute;
-    top:-8px;
-    left:4px;
-    font-size:9px;
-    background:#34c759;
-    color:#fff;
-    padding:1px 7px;
-    border-radius:8px;
-    font-weight:600;
-    z-index:2;
-    line-height:1.5;
-    box-shadow:0 1px 4px rgba(52,199,89,.35);
-    white-space:nowrap;
-  }
-  .msg.me .questionnaire-badge{
-    left:auto;
-    right:4px;
-  }
-
   .bubble{
     padding:9px 13px;
     font-size:15px;
@@ -278,6 +261,7 @@
     width:fit-content;
     max-width:100%;
     -webkit-touch-callout:none;
+    cursor:pointer;
   }
   .msg.you .bubble{
     background:var(--surface);
@@ -383,6 +367,87 @@
     30%{transform:translateY(-5px);opacity:1;}
   }
 
+  /* ================= 问卷卡片 ================= */
+  .q-card{
+    width:100%;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    cursor:pointer;
+    animation:pop .18s ease both;
+  }
+  .q-card-head{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    color:var(--accent);
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+  .q-card-head .ico{width:16px;height:16px;}
+  .q-card-question{
+    font-size:15px;
+    color:var(--text);
+    line-height:1.45;
+    word-break:break-word;
+    white-space:pre-wrap;
+  }
+  .q-card-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .q-opt{
+    background:var(--surface);
+    color:var(--text);
+    border-radius:9px;
+    padding:6px 12px;
+    font-size:13px;
+    line-height:1.3;
+    word-break:break-word;
+  }
+  .q-fill-hint{
+    font-size:12px;
+    color:var(--muted);
+    font-style:italic;
+  }
+  .q-card-meta{
+    font-size:11px;
+    color:var(--muted);
+  }
+  .q-card-answer{
+    border-top:1px dashed var(--line);
+    padding-top:9px;
+    margin-top:2px;
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .q-answer-label{
+    font-size:11px;
+    color:var(--accent);
+    font-weight:600;
+    flex:0 0 auto;
+    padding-top:1px;
+    line-height:1.5;
+  }
+  .q-answer-text{
+    font-size:14px;
+    color:var(--text);
+    line-height:1.5;
+    white-space:pre-wrap;
+    word-break:break-word;
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  /* ---- 通用面板 ---- */
   .panel{
     flex:1 1 auto;
     min-height:0;
@@ -1021,34 +1086,6 @@
   .sp-add-full{grid-column:1 / -1;}
   .sp-add-full .btn{width:100%;}
 
-  .press-menu{
-    position:fixed;
-    background:var(--bg);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:4px;
-    box-shadow:0 6px 24px rgba(0,0,0,.18);
-    display:none;
-    z-index:250;
-  }
-  .press-menu.show{display:block;}
-  .press-menu button{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    border:none;
-    background:transparent;
-    color:var(--text);
-    font-family:inherit;
-    font-size:14px;
-    padding:10px 16px;
-    border-radius:7px;
-    cursor:pointer;
-    white-space:nowrap;
-  }
-  .press-menu button:active{background:var(--surface);}
-  .press-menu button .ico{width:18px;height:18px;color:var(--accent);}
-
   .modal-mask{
     position:fixed;
     inset:0;
@@ -1243,6 +1280,7 @@
   @media (max-width:380px){
     .bubble{font-size:14px;padding:8px 12px;}
     .msg-body{max-width:76%;}
+    .questionnaire-msg .msg-body{max-width:86%;}
     .composer input{font-size:16px;}
     .chat-header .avatar{width:38px;height:38px;}
     .chat-header .avatar .ico{width:20px;height:20px;}
@@ -1260,6 +1298,8 @@
     .call-action .round .ico{width:23px;height:23px;}
     .call-mini{width:132px;height:86px;}
     .sp-tabs{max-width:190px;}
+    .q-card{padding:12px;gap:8px;}
+    .q-card-question{font-size:14px;}
   }
 </style>
 </head>
@@ -1662,14 +1702,19 @@
     <div class="modal-title">发送问卷</div>
     <div class="modal-field">
       <label for="questionnaireQuestion">问题内容</label>
-      <textarea id="questionnaireQuestion" rows="4" placeholder="输入你想问的问题…"></textarea>
+      <textarea id="questionnaireQuestion" rows="3" placeholder="输入你想问的问题…"></textarea>
     </div>
     <div class="modal-field">
       <label for="questionnaireType">题型</label>
       <select id="questionnaireType">
         <option value="fill">填空（联系人用字卡回复）</option>
         <option value="yesno">是否（联系人回复是或否）</option>
+        <option value="options">选项（联系人选择一个选项）</option>
       </select>
+    </div>
+    <div class="modal-field" id="questionnaireOptionsField" style="display:none;">
+      <label for="questionnaireOptions">选项（一行一个，至少 2 个）</label>
+      <textarea id="questionnaireOptions" rows="4" placeholder="选项 A&#10;选项 B&#10;选项 C"></textarea>
     </div>
     <div class="modal-field" id="questionnaireCardCountField">
       <label for="questionnaireCardCount">联系人回复字卡数（可几张字卡拼在一起）</label>
@@ -1702,13 +1747,6 @@
       <button class="btn primary" id="nameModalConfirm">保存</button>
     </div>
   </div>
-</div>
-
-<div class="press-menu" id="pressMenu">
-  <button id="pressQuoteBtn">
-    <svg viewBox="0 0 24 24" class="ico"><use href="#i-quote"/></svg>
-    引用
-  </button>
 </div>
 
 <div class="call-screen" id="callScreen">
@@ -1784,6 +1822,8 @@
   var questionnaireModalMask = document.getElementById('questionnaireModalMask');
   var questionnaireQuestion  = document.getElementById('questionnaireQuestion');
   var questionnaireType      = document.getElementById('questionnaireType');
+  var questionnaireOptions   = document.getElementById('questionnaireOptions');
+  var questionnaireOptionsField = document.getElementById('questionnaireOptionsField');
   var questionnaireCardCountField = document.getElementById('questionnaireCardCountField');
   var questionnaireCardCount = document.getElementById('questionnaireCardCount');
   var questionnaireDelay     = document.getElementById('questionnaireDelay');
@@ -1811,8 +1851,6 @@
   var nameInput         = document.getElementById('nameInput');
   var nameModalCancel   = document.getElementById('nameModalCancel');
   var nameModalConfirm  = document.getElementById('nameModalConfirm');
-  var pressMenu         = document.getElementById('pressMenu');
-  var pressQuoteBtn     = document.getElementById('pressQuoteBtn');
   var quoteBar          = document.getElementById('quoteBar');
   var quoteBarWho       = document.getElementById('quoteBarWho');
   var quoteBarText      = document.getElementById('quoteBarText');
@@ -1860,10 +1898,6 @@
   var incomingTimer = null;
   var proactiveCheckInt = null;
   var currentQuote = null;
-  var pressTargetMsg = null;
-  var pressTimer = null;
-  var pressStartX = 0;
-  var pressStartY = 0;
 
   var call = {
     active: false,
@@ -2073,14 +2107,32 @@
       if (typeof m !== 'object') return;
       var who = m.who || m.from || m.role || m.sender || m.side || m.type;
       var type = m.type || m.kind || 'text';
+      var ts = typeof m.ts === 'number' ? m.ts :
+               (typeof m.timestamp === 'number' ? m.timestamp :
+               (typeof m.time === 'number' ? m.time : Date.now()));
+
+      if (type === 'questionnaire') {
+        out.push({
+          who: 'me',
+          type: 'questionnaire',
+          ts: ts,
+          qid: m.qid ? String(m.qid) : uid(),
+          question: String(m.question || m.text || ''),
+          qType: m.qType || 'fill',
+          options: Array.isArray(m.options) ? m.options.map(String) : [],
+          cardCount: typeof m.cardCount === 'number' ? m.cardCount : 1,
+          delay: typeof m.delay === 'number' ? m.delay : 0,
+          answered: !!m.answered,
+          answer: m.answer != null ? String(m.answer) : null
+        });
+        return;
+      }
+
       var text = m.text != null ? m.text :
                  (m.content != null ? m.content :
                  (m.message != null ? m.message :
                  (m.msg != null ? m.msg : m.value)));
       if (text == null) return;
-      var ts = typeof m.ts === 'number' ? m.ts :
-               (typeof m.timestamp === 'number' ? m.timestamp :
-               (typeof m.time === 'number' ? m.time : Date.now()));
       var quote = null;
       if (m.quote && typeof m.quote === 'object') {
         quote = {
@@ -2246,7 +2298,7 @@
   function snapshot() {
     state.savedAt = Date.now();
     return {
-      version: 9,
+      version: 10,
       savedAt: state.savedAt,
       contactName: state.contactName,
       cards: state.cards,
@@ -2274,7 +2326,7 @@
     } catch (e) {
       try {
         var light = {
-          version: 9, savedAt: full.savedAt, contactName: full.contactName,
+          version: 10, savedAt: full.savedAt, contactName: full.contactName,
           cards: full.cards, stickers: [], myStickers: [], emojis: full.emojis,
           delay: full.delay, bg: null, avatars: { contact: null, me: null },
           sound: full.sound, messages: full.messages, heavyInIdb: true,
@@ -2508,6 +2560,8 @@
     txt.className = 'quote-text';
     if (quote.type === 'image') {
       txt.textContent = '[表情包]';
+    } else if (quote.type === 'questionnaire') {
+      txt.textContent = '[问卷] ' + (quote.text || '');
     } else {
       txt.textContent = quote.text || '';
     }
@@ -2516,11 +2570,102 @@
     return box;
   }
 
+  /* ============ 问卷卡片渲染 ============ */
+  function buildQuestionnaireCard(msg, msgIndex) {
+    var row = document.createElement('div');
+    row.className = 'msg me questionnaire-msg';
+    row.dataset.msgIndex = String(msgIndex);
+
+    var body = document.createElement('div');
+    body.className = 'msg-body';
+
+    var card = document.createElement('div');
+    card.className = 'q-card';
+    card.dataset.qid = msg.qid || '';
+
+    // 头部
+    var head = document.createElement('div');
+    head.className = 'q-card-head';
+    head.innerHTML = '<svg viewBox="0 0 24 24" class="ico"><use href="#i-questionnaire"/></svg><span>问卷</span>';
+    card.appendChild(head);
+
+    // 问题
+    var q = document.createElement('div');
+    q.className = 'q-card-question';
+    q.textContent = msg.question || '';
+    card.appendChild(q);
+
+    // 选项预览
+    var optsWrap = document.createElement('div');
+    optsWrap.className = 'q-card-options';
+    if (msg.qType === 'yesno') {
+      var o1 = document.createElement('span');
+      o1.className = 'q-opt';
+      o1.textContent = '是';
+      var o2 = document.createElement('span');
+      o2.className = 'q-opt';
+      o2.textContent = '否';
+      optsWrap.appendChild(o1);
+      optsWrap.appendChild(o2);
+    } else if (msg.qType === 'options' && Array.isArray(msg.options)) {
+      msg.options.forEach(function (o) {
+        var s = document.createElement('span');
+        s.className = 'q-opt';
+        s.textContent = o;
+        optsWrap.appendChild(s);
+      });
+    } else {
+      var fh = document.createElement('span');
+      fh.className = 'q-fill-hint';
+      fh.textContent = '等待字卡回复';
+      optsWrap.appendChild(fh);
+    }
+    card.appendChild(optsWrap);
+
+    // 元信息
+    var meta = document.createElement('div');
+    meta.className = 'q-card-meta';
+    meta.textContent = '延迟 ' + msg.delay + ' 秒';
+    card.appendChild(meta);
+
+    // 答复区
+    var ansWrap = document.createElement('div');
+    ansWrap.className = 'q-card-answer';
+    if (msg.answered && msg.answer != null) {
+      var lbl = document.createElement('span');
+      lbl.className = 'q-answer-label';
+      lbl.textContent = '答复';
+      var atx = document.createElement('span');
+      atx.className = 'q-answer-text';
+      atx.textContent = msg.answer;
+      ansWrap.appendChild(lbl);
+      ansWrap.appendChild(atx);
+    } else {
+      ansWrap.style.display = 'none';
+    }
+    card.appendChild(ansWrap);
+
+    body.appendChild(card);
+
+    var timeEl = document.createElement('span');
+    timeEl.className = 'msg-time';
+    timeEl.textContent = formatTime(msg.ts);
+    body.appendChild(timeEl);
+
+    row.appendChild(body);
+    return row;
+  }
+
   function appendMessageDOM(msg, msgIndex) {
     var who = msg.who;
     var type = msg.type || 'text';
     var text = msg.text != null ? msg.text : '';
     var ts = typeof msg.ts === 'number' ? msg.ts : Date.now();
+
+    if (type === 'questionnaire') {
+      messagesEl.appendChild(buildQuestionnaireCard(msg, msgIndex));
+      return;
+    }
 
     if (who === 'sys' || type === 'call') {
       var sysRow = document.createElement('div');
@@ -2535,6 +2680,7 @@
 
     var row = document.createElement('div');
     row.className = 'msg ' + (who === 'me' ? 'me' : 'you');
+    row.dataset.msgIndex = String(msgIndex);
 
     var wrap = buildAvatarWrap(who, who !== 'me');
 
@@ -2546,13 +2692,6 @@
       badge.className = 'proactive-badge';
       badge.textContent = '主动';
       body.appendChild(badge);
-    }
-
-    if (msg.questionnaire) {
-      var qBadge = document.createElement('span');
-      qBadge.className = 'questionnaire-badge';
-      qBadge.textContent = '问卷';
-      body.appendChild(qBadge);
     }
 
     var bubble = document.createElement('div');
@@ -2577,8 +2716,6 @@
     timeEl.className = 'msg-time';
     timeEl.textContent = formatTime(ts);
     bubble.appendChild(timeEl);
-
-    bubble.dataset.msgIndex = String(msgIndex);
 
     body.appendChild(bubble);
 
@@ -2619,7 +2756,6 @@
     var msg = { who: who, type: type, text: text, ts: Date.now() };
     if (opts.quote) msg.quote = opts.quote;
     if (opts.proactive) msg.proactive = true;
-    if (opts.questionnaire) msg.questionnaire = true;
 
     var msgIndex = state.messages.length;
     appendMessageDOM(msg, msgIndex);
@@ -2716,7 +2852,7 @@
   function findLastNonSys(excludeIndex) {
     for (var i = state.messages.length - 1; i >= 0; i--) {
       if (i === excludeIndex) continue;
-      if (state.messages[i].who !== 'sys') return state.messages[i];
+      if (state.messages[i].who !== 'sys' && state.messages[i].type !== 'questionnaire') return state.messages[i];
     }
     return null;
   }
@@ -2781,9 +2917,15 @@
 
   /* ================= 问卷 ================= */
   function updateQuestionnaireTypeUI() {
-    if (questionnaireType.value === 'yesno') {
+    var t = questionnaireType.value;
+    if (t === 'yesno') {
+      questionnaireOptionsField.style.display = 'none';
+      questionnaireCardCountField.style.display = 'none';
+    } else if (t === 'options') {
+      questionnaireOptionsField.style.display = '';
       questionnaireCardCountField.style.display = 'none';
     } else {
+      questionnaireOptionsField.style.display = 'none';
       questionnaireCardCountField.style.display = '';
     }
   }
@@ -2792,6 +2934,7 @@
   function openQuestionnaireModal() {
     questionnaireQuestion.value = '';
     questionnaireType.value = 'fill';
+    questionnaireOptions.value = '';
     questionnaireCardCount.value = '1';
     questionnaireDelay.value = '5';
     updateQuestionnaireTypeUI();
@@ -2815,39 +2958,89 @@
     return result;
   }
 
+  function updateQuestionnaireAnswer(msg) {
+    var cards = messagesEl.querySelectorAll('.q-card');
+    for (var i = 0; i < cards.length; i++) {
+      if (cards[i].dataset.qid === msg.qid) {
+        var ansWrap = cards[i].querySelector('.q-card-answer');
+        if (ansWrap) {
+          ansWrap.innerHTML = '';
+          var lbl = document.createElement('span');
+          lbl.className = 'q-answer-label';
+          lbl.textContent = '答复';
+          var atx = document.createElement('span');
+          atx.className = 'q-answer-text';
+          atx.textContent = msg.answer;
+          ansWrap.appendChild(lbl);
+          ansWrap.appendChild(atx);
+          ansWrap.style.display = '';
+        }
+        break;
+      }
+    }
+  }
+
   function submitQuestionnaire() {
     var question = questionnaireQuestion.value.trim();
     if (!question) { toast('请输入问题'); questionnaireQuestion.focus(); return; }
 
-    var qType = questionnaireType.value === 'yesno' ? 'yesno' : 'fill';
-    var count = parseInt(questionnaireCardCount.value, 10);
-    if (isNaN(count) || count < 1) count = 1;
+    var qType = questionnaireType.value;
     var delay = parseFloat(questionnaireDelay.value);
     if (isNaN(delay) || delay < 0) delay = 0;
+    var count = parseInt(questionnaireCardCount.value, 10);
+    if (isNaN(count) || count < 1) count = 1;
+
+    var options = [];
+    if (qType === 'options') {
+      var optsText = questionnaireOptions.value.trim();
+      if (!optsText) { toast('请输入选项'); questionnaireOptions.focus(); return; }
+      options = optsText.split('\n').map(function (s) { return s.trim(); }).filter(Boolean);
+      if (options.length < 2) { toast('至少需要 2 个选项'); questionnaireOptions.focus(); return; }
+    }
 
     if (qType === 'fill' && !getTextPool().length) {
       toast('字卡池为空，请先添加字卡');
       return;
     }
 
-    addMessage('me', 'text', question, false, { questionnaire: true });
-    playTone(true);
+    var msg = {
+      who: 'me',
+      type: 'questionnaire',
+      ts: Date.now(),
+      qid: uid(),
+      question: question,
+      qType: qType,
+      options: options,
+      cardCount: count,
+      delay: delay,
+      answered: false,
+      answer: null
+    };
+
+    var idx = state.messages.length;
+    appendMessageDOM(msg, idx);
+    state.messages.push(msg);
+    scrollDown(true);
+    scheduleSave();
     closeQuestionnaireModal();
+    playTone(true);
 
     setTimeout(function () {
+      var answer = '';
       if (qType === 'yesno') {
-        /* 是否题：联系人随机回复“是”或“否” */
-        var answer = Math.random() < 0.5 ? '是' : '否';
-        addMessage('other', 'text', answer, false, {});
-        playTone(false);
+        answer = Math.random() < 0.5 ? '是' : '否';
+      } else if (qType === 'options') {
+        answer = options[Math.floor(Math.random() * options.length)];
       } else {
-        /* 填空题：联系人用 N 张字卡拼成一条回复 */
         var picks = pickRandomCards(count);
-        if (!picks.length) return;
-        var replyText = picks.join('\n');
-        addMessage('other', 'text', replyText, false, {});
-        playTone(false);
+        answer = picks.join('\n') || '（暂无字卡）';
       }
+      msg.answer = answer;
+      msg.answered = true;
+      updateQuestionnaireAnswer(msg);
+      scheduleSave();
+      playTone(false);
+      scrollDown(true);
     }, delay * 1000);
   }
 
@@ -2857,11 +3050,18 @@
   });
   questionnaireConfirm.addEventListener('click', submitQuestionnaire);
 
+  /* ================= 引用 ================= */
   function setQuote(msg) {
     if (!msg) return;
-    currentQuote = { who: msg.who, type: msg.type, text: msg.text };
+    currentQuote = { who: msg.who, type: msg.type, text: msg.text || msg.question || '' };
     quoteBarWho.textContent = msg.who === 'me' ? '我' : state.contactName;
-    quoteBarText.textContent = msg.type === 'image' ? '[表情包]' : (msg.text || '');
+    if (msg.type === 'questionnaire') {
+      quoteBarText.textContent = '[问卷] ' + (msg.question || '');
+    } else if (msg.type === 'image') {
+      quoteBarText.textContent = '[表情包]';
+    } else {
+      quoteBarText.textContent = msg.text || '';
+    }
     quoteBar.classList.add('show');
   }
   function clearQuote() {
@@ -2870,87 +3070,18 @@
   }
   quoteBarClose.addEventListener('click', clearQuote);
 
-  function getPointerPos(e) {
-    if (e.touches && e.touches.length) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
-    if (e.changedTouches && e.changedTouches.length) return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
-    return { x: e.clientX, y: e.clientY };
-  }
-
-  function hidePressMenu() {
-    pressMenu.classList.remove('show');
-    pressTargetMsg = null;
-  }
-
-  function showPressMenu(row, x, y) {
-    var bubble = row.querySelector('.bubble');
-    if (!bubble) return;
-    var idx = parseInt(bubble.dataset.msgIndex, 10);
-    if (isNaN(idx) || !state.messages[idx]) return;
-    pressTargetMsg = state.messages[idx];
-
-    var menuW = 100, menuH = 50;
-    var px = Math.min(x, window.innerWidth - menuW - 10);
-    var py = Math.min(y, window.innerHeight - menuH - 10);
-    pressMenu.style.left = Math.max(8, px) + 'px';
-    pressMenu.style.top = Math.max(8, py) + 'px';
-    pressMenu.classList.add('show');
-  }
-
-  function onPressStart(e) {
-    if (e.target.closest('.press-menu')) return;
+  /* 点击消息即引用 */
+  messagesEl.addEventListener('click', function (e) {
     var row = e.target.closest('.msg');
     if (!row || row.classList.contains('sys')) return;
-    var bubble = row.querySelector('.bubble');
-    if (!bubble) return;
-
-    var p = getPointerPos(e);
-    pressStartX = p.x;
-    pressStartY = p.y;
-
-    clearTimeout(pressTimer);
-    pressTimer = setTimeout(function () {
-      showPressMenu(row, pressStartX, pressStartY);
-    }, 450);
-  }
-
-  function onPressMove(e) {
-    if (!pressTimer) return;
-    var p = getPointerPos(e);
-    var dx = p.x - pressStartX;
-    var dy = p.y - pressStartY;
-    if (Math.sqrt(dx * dx + dy * dy) > 12) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-  }
-
-  function onPressEnd() {
-    if (pressTimer) {
-      clearTimeout(pressTimer);
-      pressTimer = null;
-    }
-  }
-
-  messagesEl.addEventListener('touchstart', onPressStart, { passive: true });
-  messagesEl.addEventListener('touchmove', onPressMove, { passive: true });
-  messagesEl.addEventListener('touchend', onPressEnd);
-  messagesEl.addEventListener('touchcancel', onPressEnd);
-  messagesEl.addEventListener('mousedown', onPressStart);
-  messagesEl.addEventListener('mousemove', onPressMove);
-  messagesEl.addEventListener('mouseup', onPressEnd);
-
-  document.addEventListener('click', function (e) {
-    if (!pressMenu.contains(e.target)) hidePressMenu();
+    var idx = parseInt(row.dataset.msgIndex, 10);
+    if (isNaN(idx) || !state.messages[idx]) return;
+    var msg = state.messages[idx];
+    setQuote(msg);
+    if (inputEl) inputEl.focus();
   });
 
-  pressQuoteBtn.addEventListener('click', function () {
-    if (pressTargetMsg) {
-      setQuote(pressTargetMsg);
-      inputEl.focus();
-    }
-    hidePressMenu();
-  });
-
+  /* ================= 背景 ================= */
   function applyBackground() {
     if (state.bg) {
       messagesEl.style.backgroundImage = 'linear-gradient(rgba(255,255,255,.82), rgba(255,255,255,.82)), url("' + state.bg + '")';
@@ -2982,6 +3113,7 @@
     toast('已恢复默认背景');
   });
 
+  /* ================= 字卡 ================= */
   function renderCards() {
     if (!state.cards.categories.length) {
       catList.innerHTML = '<div class="empty-hint">还没有字卡分类，先添加一个吧。</div>';
@@ -3312,6 +3444,7 @@
 
     var last = state.messages[state.messages.length - 1];
     if (!last || last.who === 'sys') return;
+    if (last.type === 'questionnaire') return;
 
     var threshold = (state.proactiveDelay || 1) * 60 * 1000;
     var elapsed = Date.now() - (last.ts || 0);
